@@ -25,7 +25,7 @@
 
         <div class="lp-actions">
             <a href="{{ url_for('register') }}" class="lp-btn">Create free account</a>
-            <a href="#" class="lp-btn">See how it works</a>
+            <a href="#" class="lp-btn" id="open-video-modal">See how it works</a>
         </div>
 
         <div class="lp-dashboard">
@@ -103,4 +103,110 @@
     </div>
 </section>
 
+<!-- Video modal -->
+<div id="video-modal" class="lp-modal-overlay" aria-hidden="true">
+    <div class="lp-modal-box">
+        <button class="lp-modal-close" id="close-video-modal" aria-label="Close">&times;</button>
+        <div class="lp-video-wrap">
+            <iframe
+                id="video-iframe"
+                src=""
+                data-src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1"
+                title="See how Spendly works"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<style>
+.lp-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.lp-modal-overlay.is-open {
+    display: flex;
+}
+
+.lp-modal-box {
+    position: relative;
+    width: min(860px, 92vw);
+    background: var(--ink);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.lp-modal-close {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    color: var(--paper);
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+
+.lp-modal-close:hover { opacity: 1; }
+
+.lp-video-wrap {
+    position: relative;
+    padding-top: 56.25%;
+}
+
+.lp-video-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+</style>
+
+<script>
+(function () {
+    const modal    = document.getElementById('video-modal');
+    const iframe   = document.getElementById('video-iframe');
+    const openBtn  = document.getElementById('open-video-modal');
+    const closeBtn = document.getElementById('close-video-modal');
+
+    function openModal(e) {
+        e.preventDefault();
+        iframe.src = iframe.dataset.src;
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        iframe.src = '';
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+    });
+}());
+</script>
 {% endblock %}
