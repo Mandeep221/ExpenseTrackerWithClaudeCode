@@ -38,6 +38,18 @@ def init_db():
     conn.close()
 
 
+def create_user(name, email, password):
+    """Raises sqlite3.IntegrityError if email already exists."""
+    pw_hash = generate_password_hash(password, method="pbkdf2:sha256")
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+        (name, email, pw_hash)
+    )
+    conn.commit()
+    conn.close()
+
+
 def seed_db():
     conn = get_db()
     count = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
